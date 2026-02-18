@@ -43,7 +43,7 @@ node
       
       sh """
 
-      url -u sekar:sekar \
+      url -u sekhar:sekhar \
 --upload-file /var/lib/jenkins/workspace/jio-scriptedway/target/maven-web-application.war \
 http://13.235.99.80:8080//"manager/text/deploy?path=/maven-web-application&update=true"
           
