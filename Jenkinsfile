@@ -24,7 +24,7 @@ sh "${mavenHome}/bin/mvn deploy"
 stage ('deploy to tomcat')
 {
 sh """
- curl -u sekar:sekar \
+ curl -u sekhar:sekhar \
 --upload-file /var/lib/jenkins/workspace/jio-scriptedway/target/maven-web-application.war \
 http://13.235.99.80:8080//"manager/text/deploy?path=/maven-web-application&update=true"
           
