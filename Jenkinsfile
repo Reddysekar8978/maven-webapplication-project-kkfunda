@@ -76,13 +76,13 @@ node
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
-     def color = 'YELLOW'
+     color = 'YELLOW'
     colorCode = '#FFFF00'
   } else if (buildStatus == 'SUCCESS') {
-    def color = 'GREEN'
+    color = 'GREEN'
     colorCode = '#00FF00'
   } else {
-    def color = 'RED'
+    color = 'RED'
     colorCode = '#FF0000'
   }
 
