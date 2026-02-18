@@ -1,33 +1,92 @@
 node
 {
 
-// /var/lib/jenkins/tools/hudson.tasks.Maven_MavenInstallation/maven_6/bin
+   echo "git branch name: ${env.BRANCH_NAME}"
+   echo "build number is: ${env.BUILD_NUMBER}"
+   echo "node name is: ${env.NODE_NAME}"
 
-def mavenHome=tool name: "maven 6"
-stage ('git checkout')
-{
-git branch: 'dev2', url: 'https://github.com/Reddysekar8978/maven-webapplication-project-kkfunda.git'
-}
- stage ( 'mvn build')
-{
-sh "${mavenHome}/bin/mvn clean package"
-}
-stage('SQ Report')
-{
-sh "${mavenHome}/bin/mvn sonar:sonar"
 
-}
-stage (' nexus ')
-{
-sh "${mavenHome}/bin/mvn deploy"
-} 
-stage ('deploy to tomcat')
-{
-sh """
- curl -u sekhar:sekhar \
---upload-file /var/lib/jenkins/workspace/jio-scriptedway/target/maven-web-application.war \
-http://13.235.99.80:8080//"manager/text/deploy?path=/maven-web-application&update=true"
+   // /var/lib/jenkins/tools/hudson.tasks.Maven_MavenInstallation/maven_6/bin
+   def mavenHome=tool name: "maven 6"
+    try
+    {
+
+  stage('git checkout')
+  {
+    notifyBuild('STARTED')
+    git branch: 'dev2', url: 'https://github.com/Reddysekar8978/maven-webapplication-project-kkfunda.git'
+  } 
+
+    stage('COMPILE')
+  {
+    sh "${mavenHome}/bin/mvn clean compile"
+  }
+
+  stage('Build')
+  {
+    sh "${mavenHome}/bin/mvn clean package"
+  }
+
+    stage('SQ Report')
+  {
+    sh "${mavenHome}/bin/mvn sonar:sonar"
+  }
+
+      stage('Upload Artifact')
+  {
+
+    sh "${mavenHome}/bin/mvn clean deploy"
+  }
+
+    stage('Deploy to Tomcat') 
+    {
+      
+      sh """
+
+      curl -u sekhar:sekhar \
+       --upload-file /var/lib/jenkins/workspace/jio-scripted-way-PL/target/maven-web-application.war \
+       "http://13.235.99.80:8080/manager/text/deploy?path=/maven-web-application&update=true"
           
         """
-}
+    }
+
+    }  //try ending
+
+    catch (e) {
+   
+       currentBuild.result = "FAILED"
+
+  } finally {
+    // Success or failure, always send notifications
+    notifyBuild(currentBuild.result)
+  }
+  
+} // node ending
+
+
+    def notifyBuild(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESS'
+
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+     def color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESS') {
+    def color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    def color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary, channel: '#jio-dev')
+  
 }
