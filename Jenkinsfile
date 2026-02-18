@@ -64,28 +64,29 @@ node
 } // node ending
 
 
-   def notifyBuild(String buildStatus = 'STARTED') {
+    def notifyBuild(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESS'
 
-  buildStatus = buildStatus ?: 'SUCCESS'
-
+  // Default values
+  def colorName = 'RED'
   def colorCode = '#FF0000'
-  def summary = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
 
+  // Override default values based on build status
   if (buildStatus == 'STARTED') {
+    colorName = 'YELLOW'
     colorCode = '#FFFF00'
-  } 
-  else if (buildStatus == 'SUCCESS') {
+  } else if (buildStatus == 'SUCCESS') {
+    colorName = 'GREEN'
     colorCode = '#00FF00'
-  } 
-  else {
+  } else {
+    colorName = 'RED'
     colorCode = '#FF0000'
   }
 
-  try {
-    slackSend(
-      channel: '#jio-dev',
-      color: colorCode,
-      message: summary
-    )
+  // Send notifications
+  slackSend (color: colorCode, message: summary, channel: '#jio-dev')
   
 }
