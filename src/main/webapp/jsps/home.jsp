@@ -46,7 +46,7 @@
 <body>
 
 <header>
-    <h1> Welcome to KK DEVOPS AWS Portal tom at 7pm </h1>
+    <h1> Welcome to KK DEVOPS AWS Portal tom at 7pm everyday</h1>
     <h3>Training | Development | Consulting</h3>
 </header>
 
