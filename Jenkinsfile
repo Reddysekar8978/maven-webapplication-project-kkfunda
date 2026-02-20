@@ -7,7 +7,7 @@ node
 def mavenHome=tool name: "maven 6"
  try
  {
-  
+  notifyBuild('STARTED')
 stage ('git checkout')
 {
 git branch: 'dev2', url: 'https://github.com/Reddysekar8978/maven-webapplication-project-kkfunda.git'
