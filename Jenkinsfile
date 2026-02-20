@@ -69,6 +69,6 @@ def notifyBuild(String buildStatus = 'STARTED') {
   }
 
   // Send notifications
-  slackSend (color: colorCode, message: summary, channel: '#jio-devteam')
+  slackSend (color: colorCode, message: summary, channel: '#jio-dev')
   
 }
