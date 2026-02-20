@@ -8,8 +8,7 @@ node
 
    // /var/lib/jenkins/tools/hudson.tasks.Maven_MavenInstallation/maven_6/bin
    def mavenHome=tool name: "maven 6"
-    try
-    {
+   
 
   stage('git checkout')
   {
@@ -50,43 +49,8 @@ node
         """
     }
 
-    }  //try ending
-
-    catch (e) {
-   
-       currentBuild.result = "FAILED"
-
-  } finally {
-    // Success or failure, always send notifications
-    notifyBuild(currentBuild.result)
-  }
+    }  
   
-} // node ending
 
 
-    def notifyBuild(String buildStatus = 'STARTED') {
-  // build status of null means successful
-  buildStatus =  buildStatus ?: 'SUCCESS'
-
-  // Default values
-  def colorName = 'RED'
-  def colorCode = '#FF0000'
-  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-  def summary = "${subject} (${env.BUILD_URL})"
-
-  // Override default values based on build status
-  if (buildStatus == 'STARTED') {
-     
-    colorCode = '#FFFF00'
-  } else if (buildStatus == 'SUCCESS') {
-    
-    colorCode = '#00FF00'
-  } else {
-    
-    colorCode = '#FF0000'
-  }
-
-  // Send notifications
-  slackSend (color: colorCode, message: summary, channel: '#jio-dev')
   
-}
