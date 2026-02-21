@@ -1,0 +1,55 @@
+pipeline
+{
+    agent any
+    tools
+      {
+        maven "maven 6"
+      } 
+         stages
+       {
+           stage('git checkout')
+             {
+              steps
+                  {
+                     git branch: 'dev2', url: 'https://github.com/Reddysekar8978/maven-webapplication-project-kkfunda.git'
+                  }
+             }// stage git close
+           stage( 'build')
+            {
+              steps
+            {
+                sh "mvn clean package"
+            }
+            } // build stage ending
+	
+           stage('SQ report')
+	        {
+	          steps
+		    {
+		      sh "mvn sonar:sonar"
+		    }
+	        } // stage SQ ending
+		   stage('upload into nexus')
+		    {
+		      steps
+			   {
+			         sh "mvn deploy"
+			  }
+		   } //nexus stage ending
+		  stage(' tomcat')
+		  {
+		  steps 
+		  {
+		  
+         
+           sh """
+           curl -u sekhar:sekhar \
+           --upload-file /var/lib/jenkins/workspace/Jio-declarative/target/maven-web-application.war \
+           http://13.235.18.129:8080//"manager/text/deploy?path=/maven-web-application&update=true"
+          
+           """
+		  }
+		  }// tomcat stage ending
+      } //stages ending
+
+} //pipeline ending
